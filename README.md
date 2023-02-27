@@ -235,8 +235,12 @@ Now it's time to deploy our application to Azure. To do this, we first have to s
 
 4. Click Next: Deployment >. Here you can set up your CD connection to GitHub, but we're going to do this in a later step so let's skip this for now.
 
+5. Go to the Monitoring tab and select No for the Enable Application Insights option.
+
+<img width="373" alt="image" src="https://user-images.githubusercontent.com/125378671/221605521-3a6444d0-fa67-4f49-8604-491782cee9ef.png">
+
 5. Click Review + create, as we don't need to configure anything on the other tabs for this workshop. Check that your configuration looks like this, but with the names you decided:
-<img width="340" alt="image" src="https://user-images.githubusercontent.com/125378671/221568337-dc0d78b5-f5d5-4e26-ac33-1574e225d73d.png">
+<img width="340" alt="image" src="https://user-images.githubusercontent.com/125378671/221606059-119d75d2-68e4-4445-99e2-5f477672244a.png">
 
 6. Click Create, the ceration can take a few minutes. When it's done, click Go to resource. 
 
@@ -406,7 +410,12 @@ We've now set up a CI/CD workflow using GitHub Actions and Azure. Let's test it 
 
 
 ## Step 4 - Additional CI actions
-As mentioned before, there're more ways to use workflows other than just building and deploying your code. 
+As mentioned before, there're more ways to use workflows other than just building and deploying your code. You can check out the actions in the Marketplace here: https://github.com/marketplace?type=actions
+
+Some that could be worth checking out:
+* Super-Linter, helps you maintaining good looking code by failing the action if your code syntax doesn't follow the standards. https://github.com/marketplace/actions/super-linter
+* slack-send, send data into Slack when you're running your workflow. https://github.com/marketplace/actions/slack-send
+* Code quality actions, there're multiple code quality actions to check out: https://github.com/marketplace?category=code-quality&type=actions.
 
 ## Delete your web app
 Since we've created the web app using a free subscription and a free pricing tier - it will never cost you any money unless you change any of these settings.
