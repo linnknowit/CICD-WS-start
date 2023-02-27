@@ -1,11 +1,12 @@
 # Workshop CI/CD
+
 ### Preparation
 * Create a GitHub account
 * Create an Azure account (https://azure.microsoft.com/sv-se/free/students/)
 
 ## Step 1 - CI with GitHub Actions
 ### Preparation
-1. Fork this repository. https://github.com/linnknowit/CICD-WS-start/
+1. Fork this repository into a public repository. https://github.com/linnknowit/CICD-WS-start/ 
 
 2. Create a new YAML-file in .github/workflows using GitHub. Call the file cicd-pipeline.yaml
 <img width="751" alt="image" src="https://user-images.githubusercontent.com/125378671/221523160-af825a69-5c09-40e3-815e-528fa649b165.png">
@@ -207,3 +208,186 @@ jobs:
 
 
 ## Step 2 - CD with GitHub Actions and Azure
+Now it's time to deploy our application to Azure. To do this, we first have to set up an App Service in Azure and then add some deployment steps to our YAML file.
+
+### Set up an App Service in Azure
+1. Go to https://portal.azure.com/. If you're asked to sign in - sign in using the account you created before.
+
+2. Search for App Services and click Create.
+<img width="401" alt="image" src="https://user-images.githubusercontent.com/125378671/221562360-b747f61d-a0a1-429e-93af-2514e35aef77.png">
+
+3. Set up the Web App as follows:
+
+**Project Details**
+* Subscription: Your free subscription
+* Resource Group: Create a new with a name you decide, a suggestion is cicd-ws
+
+**Instance Details**
+* Name: *This name has to be gobally unique, a suggestion is cicd-demo-ws-[your name or a number]*
+* Publish: Code
+* Runtime stack: .NET 6 (LTS)
+* Operating System: Windows
+* Region: West Europe or Sweden Central (you choose a region that is close to your users)
+
+**Pricing plans**
+* Windows Plan: Create a new or use the default one
+* Pricing plan: Free F1 (Shared infrastructure) 
+
+4. Click Next: Deployment >. Here you can set up your CD connection to GitHub, but we're going to do this in a later step so let's skip this for now.
+
+5. Click Review + create, as we don't need to configure anything on the other tabs for this workshop. Check that your configuration looks like this, but with the names you decided:
+<img width="340" alt="image" src="https://user-images.githubusercontent.com/125378671/221568337-dc0d78b5-f5d5-4e26-ac33-1574e225d73d.png">
+
+6. Click Create, the ceration can take a few minutes. When it's done, click Go to resource. 
+
+<img width="584" alt="image" src="https://user-images.githubusercontent.com/125378671/221569711-f1be2690-d10c-4e93-b52f-96d6313e74f6.png">
+
+#### Set up connection between Azure and GitHub 
+Now we've successfully created a web app in Azure! But, if you click the Browse button in the Azure portal, you'll see a default Azure page since we haven't connected our GitHub repository with our Azure Web App. Let's set that up!
+<img width="854" alt="image" src="https://user-images.githubusercontent.com/125378671/221570595-ca1b176b-f94d-4792-b2f8-86c99758e80f.png">
+
+<img width="648" alt="image" src="https://user-images.githubusercontent.com/125378671/221570881-2a46127a-aa90-4213-ac1b-757c93a4379d.png">
+
+The deployment to Azure can be set up automatically via the portal, by using the Deployment Center in the left pane menu and authenticating with your GitHub Account. We'll use part of this to create a publish profile, but we'll write the deployment workflow jobs on our own.
+
+<img width="118" alt="image" src="https://user-images.githubusercontent.com/125378671/221571610-62c813e2-8e02-44a0-8668-911d05618879.png">
+
+7. Select the Deployment Center in the left pane menu, and authorize using GitHub. Set it up with the repository you've used, select **Use available workflow** for the Workflow option. Click Save.
+<img width="474" alt="image" src="https://user-images.githubusercontent.com/125378671/221578381-9b8ade8c-de4d-4bf2-8124-9deb6bcbd782.png">
+
+8. Click Manage publish profile and download the publish profile.
+<img width="361" alt="image" src="https://user-images.githubusercontent.com/125378671/221587547-71d0e78f-6642-4cd0-8bd0-eae830f712a0.png">
+
+9. Open the file on your computer using a text editor, and copy the content.
+
+10. Go back to GitHub, select the Settings tab and Actions under Secrets and variables in the left pane menu.
+<img width="733" alt="image" src="https://user-images.githubusercontent.com/125378671/221588832-21599527-76fe-4318-ae4e-dd668fbac422.png">
+
+11. Click New repository secret.
+<img width="411" alt="image" src="https://user-images.githubusercontent.com/125378671/221589923-7092fca5-24cb-41d0-a7b7-fe1286b5dc62.png">
+
+12. Add your copied publish profile value. Set the Name to AZURE_WEBAPP_PUBLISH_PROFILE. Click Add secret.
+<img width="424" alt="image" src="https://user-images.githubusercontent.com/125378671/221590895-0c13ef37-a887-4872-9ec6-8b3469623195.png">
+
+
+##### Add deployment jobs in GitHub
+Let's edit the YAML workflow file. Go to it by clicking Code, your workflows folder, and then the file name.
+
+13. Edit the YAML file by clicking the pen icon.
+<img width="571" alt="image" src="https://user-images.githubusercontent.com/125378671/221572121-1c63bb6b-baae-4bdb-8692-fe5356593ffe.png">
+
+Notice that the Marketplace showed up to the right on the screen. This is where we've gotten our actions from when we wrote 
+```yml
+- uses: actions/xxx 
+```
+in the CI job. If you click an action you'll see how to use them in your YAML file. As you can see, there're options for environments other than .NET as well.
+
+<img width="309" alt="image" src="https://user-images.githubusercontent.com/125378671/221574715-943d241f-0f74-4a2c-aa11-6a352705f0be.png">
+
+14. Below the build job, add a deployment job:
+
+```yml
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+```
+
+* The *runs-on* keyword defines that we're using a VM with the latest version of Windows for this job as well.
+
+* Jobs run in parallel if not defined otherwise, since our deployment job depends on that the build job is completed, we add the *needs* keyword to make GitHub Actions wait with this job until the build job is completed.
+
+* The *environment* keyword defines the environment variables. The name of the environment we're deploying to is Production. We'll get the url from an action we'll define in step 10.
+
+15. Let's add the actions. First, add an action that downloads the artifact from the build job we created before. The *with* keyword let's us define the name of the artifact.
+
+```yml
+    steps:
+      - name: Download artifact from build job
+      - uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+```
+
+16. Add a job that deploys to Azure. For this, we'll use the keyword *id* which has to be the same as the second part of the url value in the environments variables we created in step 8. Also notice that the *uses* keyword gets this action from Azure instead of Actions, since this action is created by Azure. 
+
+Replace the app-name value with the name you created in Azure. The publish-profile will get the publish profile secret we created earlier, it contains the credentals we need to deploy to our Azure Web App.
+
+```yml
+  steps:
+      - name: Download artifact from build job
+      - uses: actions/download-artifact@v3
+      with:
+        name: .net-app
+        
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: {The name of your web app in Azure, probably something like cicd-demo-ws}
+          slot-name: Production
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
+```
+
+17. Commit to your master branch. The file should look like this now:
+
+```yml
+name: Build and Deploy to Azure
+
+on: 
+  push:
+  workflow_dispatch:
+  
+jobs:
+  build:
+    runs-on: windows-latest
+  
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up .NET Core SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+
+      - name: Publish with dotnet
+        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
+    steps:
+      - name: Download artifact from build job
+      - uses: actions/download-artifact@v3
+        with:
+          name: .net-app
+      
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: cicd-demo-ws
+          slot-name: Production
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .
+        
+```
+
+## Step 3 - Additional CI actions
+As mentioned before, there're more ways to use workflows other than just building and deploying your code. 
