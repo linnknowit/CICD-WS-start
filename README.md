@@ -306,7 +306,7 @@ in the CI job. If you click an action you'll see how to use them in your YAML fi
 ```yml
     steps:
       - name: Download artifact from build job
-      - uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: .net-app
 ```
@@ -318,9 +318,9 @@ Replace the app-name value with the name you created in Azure. The publish-profi
 ```yml
   steps:
       - name: Download artifact from build job
-      - uses: actions/download-artifact@v3
-      with:
-        name: .net-app
+        uses: actions/download-artifact@v3
+        with:
+          name: .net-app
         
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -374,7 +374,7 @@ jobs:
     
     steps:
       - name: Download artifact from build job
-      - uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v3
         with:
           name: .net-app
       
