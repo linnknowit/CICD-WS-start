@@ -407,3 +407,19 @@ We've now set up a CI/CD workflow using GitHub Actions and Azure. Let's test it 
 
 ## Step 4 - Additional CI actions
 As mentioned before, there're more ways to use workflows other than just building and deploying your code. 
+
+## Delete your web app
+Since we've created the web app using a free subscription and a free pricing tier - it will never cost you any money unless you change any of these settings.
+
+**If you want to delete your web app:**
+1. Go to the Azure portal. https://portal.azure.com/
+
+2. Under Navigate, click Resource groups.
+<img width="550" alt="image" src="https://user-images.githubusercontent.com/125378671/221602047-52a5e4ea-6cd7-442b-b453-ad05d0c4850a.png">
+
+3. Click the cicd-ws resource group you created earlier.
+
+4. Click Delete resource group and follow the steps shown in the pop-up. 
+<img width="958" alt="image" src="https://user-images.githubusercontent.com/125378671/221602805-f9cd0323-9577-43fa-9004-41fcbd7488cb.png">
+
+
