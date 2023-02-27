@@ -389,5 +389,21 @@ jobs:
         
 ```
 
-## Step 3 - Additional CI actions
+## Step 3 - Test out the CI/CD workflow
+We've now set up a CI/CD workflow using GitHub Actions and Azure. Let's test it out!
+
+1. Click the Code tab in GitHub. Click the Pages folder.
+<img width="463" alt="image" src="https://user-images.githubusercontent.com/125378671/221599651-c6569c0d-69bf-470c-8853-03da3e11e12c.png">
+
+2. Edit the Index.cshtml file. Change the text in the h1 and/or p tags to whatever you'd like.
+<img width="635" alt="image" src="https://user-images.githubusercontent.com/125378671/221599947-30465db0-24c4-46c3-a5e4-e24c993386ab.png">
+
+3. Commit the file. This will trigger the push trigger in in our workflow and the changes will automatically get built and deployed to our web app in Azure.
+
+4. When the build and release jobs are done, refresh your web app in your browser and see that your changes have been deployed.
+
+<img width="713" alt="image" src="https://user-images.githubusercontent.com/125378671/221600471-be4b41f8-d6da-49df-b052-4f3c47c589c8.png">
+
+
+## Step 4 - Additional CI actions
 As mentioned before, there're more ways to use workflows other than just building and deploying your code. 
