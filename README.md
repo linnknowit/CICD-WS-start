@@ -29,7 +29,7 @@ name: Build and Deploy to Azure
 on: 
   push:
 ```
-5. Let's also make it possible to run our workflow from the Actions tab, without pushing any changes to the repository. We do this by adding the keyworkd *workflow_dispatch*.
+5. Let's also make it possible to run our workflow from the Actions tab, without pushing any changes to the repository. We do this by adding the keyword *workflow_dispatch*.
 
 ```yml
 name: Build and Deploy to Azure
@@ -55,7 +55,7 @@ on:
 jobs:
 ```
 
-7. Jobs and all of it's actions run on a virtual machine (VM), which emulates a physical computer. GitHub has it's own predefined VMs, which we'll use. Specify that our VM should run on the latest windows version using these keywords:
+7. Jobs and all of its actions run on a virtual machine (VM), which emulates a physical computer. GitHub has its own predefined VMs, which we'll use. Specify that our VM should run on the latest windows version using these keywords:
 ```yml
 jobs:
   build:
